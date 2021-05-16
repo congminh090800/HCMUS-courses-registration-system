@@ -140,5 +140,9 @@ public class main {
 //        SinhVienHocPhanDAO.xemMonDaDangKi(sv).forEach((each) -> {
 //            System.out.println(each.getTenMonHoc());
 //        });
+//            Lop lop = LopDAO.timLop(1);
+//            LopDAO.timSvTrongLop(lop, "18120463").forEach((t) -> {
+//                System.out.println(t.getHoTen());
+//            });
     }
 }

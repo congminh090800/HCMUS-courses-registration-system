@@ -12,6 +12,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import utils.HibernateUtil;
+import vaitro.SinhVien;
 
 /**
  *
@@ -117,5 +118,28 @@ public class LopDAO {
             session.close();
         }
         return result;       
+    }
+    public static List<SinhVien> timSvTrongLop(Lop lop,String keyword){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Integer idLop = lop.getIdLop();
+        List<SinhVien> result = null;
+        try {
+            String hql="""
+                       select sv
+                       from Lop l left join SinhVien sv on l.idLop=sv.lop
+                       where l.idLop=:idLop and (sv.hoTen like :keyword
+                       or sv.diaChi like :keyword or sv.sdt like :keyword
+                       or sv.gioiTinh like :keyword or sv.mssv like :keyword)
+                       """;
+            Query query = session.createQuery(hql);
+            query.setParameter("idLop", idLop);
+            query.setParameter("keyword", "%"+keyword+"%");
+            result =(List<SinhVien>)query.getResultList();
+        } catch (HibernateException ex) {
+            System.err.println(ex);
+        } finally {
+            session.close();
+        }
+        return result;         
     }
 }

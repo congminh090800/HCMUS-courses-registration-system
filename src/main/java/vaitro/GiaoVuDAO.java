@@ -80,7 +80,7 @@ public class GiaoVuDAO {
     public static Integer themGiaoVu(GiaoVu giaoVu){
         Session session = HibernateUtil.getSessionFactory().openSession();
         Integer result = 0;
-        if (TaiKhoanDAO.timTaiKhoan(giaoVu.getMaGv())!=null || GiaoVuDAO.timGiaoVu(giaoVu.getMaGv())!=null){
+        if (timGiaoVu(giaoVu.getIdGv())!=null || TaiKhoanDAO.timTaiKhoan(giaoVu.getMaGv())!=null){
             return result;
         }else{
             Integer id = TaiKhoanDAO.taoTaiKhoan(new TKGiaoVu(giaoVu.getMaGv(),giaoVu.getMaGv(),"giáo vụ"));
@@ -101,7 +101,7 @@ public class GiaoVuDAO {
     }
     public static boolean capNhatThongTin(GiaoVu giaoVu){
         Session session = HibernateUtil.getSessionFactory().openSession();
-        if (GiaoVuDAO.timGiaoVu(giaoVu.getMaGv())==null){
+        if (GiaoVuDAO.timGiaoVu(giaoVu.getIdGv())==null){
             return false;
         }
         try{
