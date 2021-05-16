@@ -5,7 +5,10 @@
  */
 package hocphan;
 
+import dkhp.SinhVienHocPhan;
 import hocki.HocKi;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,12 +17,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import monhoc.MonHoc;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import vaitro.SinhVien;
 /**
  *
  * @author Admin
@@ -31,6 +37,7 @@ public class HocPhan {
     private MonHoc monHoc;
     private String  maHocPhan,gvLyThuyet,tenPhongHoc,ngayHoc;
     private HocKi hocKi;
+    private Set<SinhVienHocPhan> dsSVHP = new HashSet<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hocphan_seq")
@@ -113,8 +120,17 @@ public class HocPhan {
     public void setHocKi(HocKi hocKi) {
         this.hocKi = hocKi;
     }
-
+    
     public HocPhan() {
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "hocPhan", targetEntity = SinhVienHocPhan.class)
+    public Set<SinhVienHocPhan> getDsSVHP() {
+        return dsSVHP;
+    }
+
+    public void setDsSVHP(Set<SinhVienHocPhan> dsSVHP) {
+        this.dsSVHP = dsSVHP;
     }
 
     public HocPhan(Integer caHoc, Integer soLuongToiDa, String gvLyThuyet, String tenPhongHoc, String ngayHoc) {

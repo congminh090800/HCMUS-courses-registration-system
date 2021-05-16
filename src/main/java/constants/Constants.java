@@ -21,4 +21,5 @@ public class Constants {
     public static String THU="thứ 5";
     public static String FRI="thứ 6";
     public static String SUN="chủ nhật";
+    public static Integer GIOI_HAN_MON=8;
 }

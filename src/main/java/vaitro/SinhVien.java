@@ -6,8 +6,12 @@ package vaitro;
  * and open the template in the editor.
  */
 
+import dkhp.SinhVienHocPhan;
+import hocphan.HocPhan;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import taikhoan.TaiKhoan;
 import javax.persistence.Column;
@@ -17,7 +21,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lop.Lop;
 
@@ -33,6 +40,7 @@ public class SinhVien extends VaiTro{
     private Integer idSv;
     private String mssv;
     private Lop lop;
+    private Set<SinhVienHocPhan> dsSVHP = new HashSet<>();
             
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,6 +70,15 @@ public class SinhVien extends VaiTro{
 
     public void setLop(Lop lop) {
         this.lop = lop;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sinhVien",targetEntity = SinhVienHocPhan.class)
+    public Set<SinhVienHocPhan> getDsSVHP() {
+        return dsSVHP;
+    }
+
+    public void setDsSVHP(Set<SinhVienHocPhan> dsSVHP) {
+        this.dsSVHP = dsSVHP;
     }
     
     public SinhVien(String mssv, String hoTen, String diaChi, String sdt, String ngaySinh, String gioiTinh) {

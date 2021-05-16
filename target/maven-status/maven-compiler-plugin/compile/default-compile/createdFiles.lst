@@ -6,6 +6,7 @@ monhoc\MonHocDAO.class
 hocphan\HocPhanDAO.class
 hocphan\HocPhan.class
 vaitro\SinhVienDAO.class
+dkhp\SinhVienHocPhan.class
 taikhoan\TaiKhoan.class
 utils\HibernateUtil.class
 taikhoan\TKSinhVien.class
@@ -16,6 +17,7 @@ hocki\HocKiDAO.class
 vaitro\GiaoVuDAO.class
 monhoc\MonHoc.class
 taikhoan\TKGiaoVu.class
+dkhp\SinhVienHocPhanDAO.class
 hocki\HocKiHienTai.class
 hocki\HocKi.class
 hocki\HocKiHienTaiDAO.class

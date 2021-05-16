@@ -5,6 +5,7 @@
  */
 package vaitro;
 
+import java.io.Serializable;
 import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -30,4 +31,16 @@ public class SinhVienDAO {
 //        }
 //        return dsSinhVien;
 //    }
+    public static SinhVien timSinhVien(Integer idSv){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        SinhVien sinhVien = null;
+        try {
+            sinhVien = (SinhVien) session.get(SinhVien.class,(Serializable)idSv);
+        } catch (HibernateException ex) {
+            System.err.println(ex);
+        } finally {
+            session.close();
+        }   
+        return sinhVien;
+    }
 }

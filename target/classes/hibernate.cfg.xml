@@ -29,5 +29,6 @@
     <mapping class="hocki.HocKiHienTai"/>
     <mapping class="dkhp.DKHP"/>
     <mapping class="hocphan.HocPhan"/>
+    <mapping class="dkhp.SinhVienHocPhan"/>
  </session-factory>
 </hibernate-configuration>

@@ -29,6 +29,9 @@ import static taikhoan.TaiKhoanDAO.doiMatKhau;
 import vaitro.GiaoVu;
 import vaitro.GiaoVuDAO;
 import constants.Constants;
+import dkhp.SinhVienHocPhanDAO;
+import vaitro.SinhVien;
+import vaitro.SinhVienDAO;
 
 /**
  *
@@ -92,14 +95,50 @@ public class main {
 //           DKHPDAO.layDanhSach().forEach((DKHP) -> {
 //               System.out.println(DKHP.getHocKi().getNamHoc()+" "+DKHP.getHocKi().getTenHocKi()+" "+DKHP.getIdDkhp().toString());
 //           });
+
 //            MonHoc monHoc = MonHocDAO.timMonHoc("NMCNTT");
+//            MonHoc monHoc2 = MonHocDAO.timMonHoc("VLDC");
+//            MonHoc monHoc3 = MonHocDAO.timMonHoc("HDH");
 //            HocPhan hocPhan = new HocPhan(3, 150, "Le Hao", "F102", Constants.MON);
 //            HocPhan hocPhan2 = new HocPhan(1, 150, "Nguyen Ha", "D202", Constants.FRI);
+//            HocPhan hocPhan3 = new HocPhan(1, 100, "Nguyen Ha", "D203", Constants.FRI);
+//            HocPhan hocPhan4 = new HocPhan(4, 150, "Tran Ba", "D103", Constants.SAT);
 //            HocPhanDAO.taoHocPhan(hocPhan,monHoc);
 //            HocPhanDAO.taoHocPhan(hocPhan2,monHoc);
+//            HocPhanDAO.taoHocPhan(hocPhan3,monHoc2);
+//            HocPhanDAO.taoHocPhan(hocPhan4,monHoc3);
 //            HocPhanDAO.layDanhSach("NMCNTT").forEach((hp) -> {
 //                System.out.println(hp.getMaHocPhan()+" "+hp.getMonHoc().getTenMonHoc()+" "+hp.getHocKi().getTenHocKi());
 //            });
+
 //              System.out.println(LopDAO.demSoLuongSV(1, null));
+
+//               HocPhan hocPhan = HocPhanDAO.timHocPhan("NMCNTT00015");
+//
+//               SinhVien sinhVien = SinhVienDAO.timSinhVien(1);
+//               Integer soLuong = SinhVienHocPhanDAO.kiemTraSoLuongMon(sinhVien);
+//               System.out.println("So mon da dang ki:"+soLuong);
+//                boolean daDangKi = SinhVienHocPhanDAO.daDangKiMon(sinhVien, hocPhan);
+//                if (daDangKi){
+//                    System.out.println("da dang ki mon nay");
+//                }else
+
+//               HocPhan hp = HocPhanDAO.timHocPhan("HDH00022");
+                HocPhan hp2 = HocPhanDAO.timHocPhan("NMCNTT00019");
+                SinhVien sv = SinhVienDAO.timSinhVien(1);
+//                SinhVienHocPhanDAO.dangKiHocPhan(sv, hp);
+//                SinhVienHocPhanDAO.dangKiHocPhan(sv, hp2);      
+
+        //SinhVienHocPhanDAO.huyDKHP(1);
+//        SinhVienHocPhanDAO.xemHpCuaSv(sv).forEach((each) -> {
+//            System.out.println(each.getMaHocPhan());
+//        });
+//        
+//        SinhVienHocPhanDAO.xemSvTrongHp(hp2).forEach((each) -> {
+//            System.out.println(each.getHoTen());
+//        });
+//        SinhVienHocPhanDAO.xemMonDaDangKi(sv).forEach((each) -> {
+//            System.out.println(each.getTenMonHoc());
+//        });
     }
 }
