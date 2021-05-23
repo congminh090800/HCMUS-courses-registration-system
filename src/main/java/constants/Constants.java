@@ -22,4 +22,10 @@ public class Constants {
     public static String FRI="thứ 6";
     public static String SUN="chủ nhật";
     public static Integer GIOI_HAN_MON=8;
+    public static String SUCCESS="Thành công";
+    public static String FAIL="Thất bại";
+    public static String ASK_FOR_COMFIRMATION = "Yêu cầu xác nhận";
+    public static String WARNING = "Cảnh báo";
+    public static String MISSING_PARAMS = "Thiếu thông tin hoặc thông tin không hợp lệ!";
+    public static String UNAUTHORIZED = "Sai tài khoản hoặc mật khẩu";
 }

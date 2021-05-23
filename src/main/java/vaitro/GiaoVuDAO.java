@@ -48,7 +48,7 @@ public class GiaoVuDAO {
         GiaoVu giaoVu = null;
         try {
             String hql = """
-                         select gv from GiaoVu gv
+                         select gv from GiaoVu gv left join fetch gv.taiKhoan
                          where gv.maGv=:maGv
                          """;
             Query query = session.createQuery(hql);
@@ -63,11 +63,43 @@ public class GiaoVuDAO {
         return giaoVu;
     }
     
+    public static GiaoVu timGiaoVuTK(Integer idTk){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        GiaoVu giaoVu = null;
+        try {
+            String hql = """
+                         select gv from GiaoVu gv left join fetch gv.taiKhoan
+                         where gv.taiKhoan.idTk=:idTk
+                         """;
+            Query query = session.createQuery(hql);
+            query.setParameter("idTk",idTk);
+            List<GiaoVu> dsGV = query.getResultList();
+            if (dsGV.size()>0){
+                giaoVu = dsGV.get(0);
+            }   
+        } catch (HibernateException ex) {
+            System.err.println(ex);
+        } finally {
+            session.close();
+        }   
+        return giaoVu;
+    }
+    
+    
     public static GiaoVu timGiaoVu(Integer idGv){
         Session session = HibernateUtil.getSessionFactory().openSession();
         GiaoVu giaoVu = null;
         try {
-            giaoVu = (GiaoVu) session.get(GiaoVu.class,(Serializable)idGv);
+            String hql = """
+                         select gv from GiaoVu gv left join fetch gv.taiKhoan
+                         where gv.idGv=:idGv
+                         """;
+            Query query = session.createQuery(hql);
+            query.setParameter("idGv",idGv);
+            List<GiaoVu> dsGV = query.getResultList();
+            if (dsGV.size()>0){
+                giaoVu = dsGV.get(0);
+            }
         } catch (HibernateException ex) {
             System.err.println(ex);
         } finally {

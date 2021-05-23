@@ -126,4 +126,11 @@ public class TaiKhoanDAO {
         }
         return true;        
     }
+    
+    public static TaiKhoan xacThucTaiKhoan(String userName, String password){
+        TaiKhoan tk = timTaiKhoan(userName);
+        
+        if (tk == null || (tk.getMatKhau() == null ? password != null : !tk.getMatKhau().equals(password))) return null;
+        return tk;
+    }
 }
