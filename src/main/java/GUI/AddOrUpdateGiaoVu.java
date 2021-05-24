@@ -240,7 +240,7 @@ public class AddOrUpdateGiaoVu extends javax.swing.JFrame {
         if (result) {
             if (mode == Constants.UPDATE_MODE)JOptionPane.showConfirmDialog(null,"Cập nhật thành công",Constants.SUCCESS,JOptionPane.DEFAULT_OPTION);
             else JOptionPane.showConfirmDialog(null,"Tên đăng nhập và mật khẩu mặc định là mã giáo vụ",Constants.SUCCESS,JOptionPane.DEFAULT_OPTION);
-            managerDashBoard.updateTable("");
+            managerDashBoard.updateAllTable("");
         }else {
             JOptionPane.showConfirmDialog(null,Constants.MISSING_PARAMS,Constants.FAIL,JOptionPane.DEFAULT_OPTION);            
         }       

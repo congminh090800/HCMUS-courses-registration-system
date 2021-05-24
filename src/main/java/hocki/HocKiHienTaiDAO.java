@@ -33,11 +33,16 @@ public class HocKiHienTaiDAO {
     }
     public static void thayDoiHKHT(HocKi hocKi){
         Session session = HibernateUtil.getSessionFactory().openSession();
-        HocKiHienTai hkht = new HocKiHienTai(hocKi);
+        Integer idHk = hocKi.getIdHk();
+        Integer idHt = layThongTinHKHT().getHkht();
         try{
             session.getTransaction().begin();
-            if (layThongTinHKHT()==null) session.save(hkht);
-                else session.update(hkht);
+            String hql = "UPDATE HocKiHienTai set hkht= :idHk "  + 
+                         "WHERE id = :idHt";
+            Query query = session.createQuery(hql);
+            query.setParameter("idHk", idHk);
+            query.setParameter("idHt", idHt);  
+            query.executeUpdate();
             session.getTransaction().commit();
         }catch (HibernateException ex){
             session.getTransaction().rollback();

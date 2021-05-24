@@ -27,7 +27,7 @@ public class MonHocDAO {
         try {
             String hql ="select mh from MonHoc mh\n"+
                         (keyword.equals("")?"":"""
-                                               where mh.tenMonHoc like :keyword
+                                               where mh.tenMonHoc like :keyword or mh.maMonHoc like :keyword
                                                """);
             Query query = session.createQuery(hql);
             if (!keyword.equals("")){

@@ -75,7 +75,7 @@ public class HocKiDAO {
         Session session = HibernateUtil.getSessionFactory().openSession();
         List<HocKi> dsHocKi = null;
         try {
-            String hql ="select hk from HocKi hk";
+            String hql ="select hk from HocKi hk left join fetch hk.hocKiHienTai";
             Query query = session.createQuery(hql);
             dsHocKi = query.getResultList();      
         } catch (HibernateException ex) {

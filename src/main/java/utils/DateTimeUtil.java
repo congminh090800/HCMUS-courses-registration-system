@@ -30,7 +30,7 @@ public class DateTimeUtil {
         return Date.valueOf(localDate);
     }
     public static String convertToStringViaDate(Date date){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);
     }
     public static String convertToStringViaTimestamp(Timestamp timeStamp){
