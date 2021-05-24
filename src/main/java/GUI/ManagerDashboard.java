@@ -5,9 +5,16 @@
  */
 package GUI;
 import constants.Constants;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import taikhoan.TaiKhoan;
+import taikhoan.TaiKhoanDAO;
 import utils.DateTimeUtil;
 import vaitro.GiaoVu;
 import vaitro.GiaoVuDAO;
@@ -22,15 +29,39 @@ public class ManagerDashboard extends javax.swing.JFrame {
      * Creates new form ManagerDashboard
      */
     private GiaoVu giaoVu;
+    private List<GiaoVu> dsGiaoVu = null;
             
     public ManagerDashboard(TaiKhoan tk) {
         this.giaoVu = GiaoVuDAO.timGiaoVuTK(tk.getIdTk());
+        loadData();
         initComponents();
     }
 
     public ManagerDashboard() {
         this.giaoVu = GiaoVuDAO.timGiaoVu(1);
+        loadData();
         initComponents();
+    }
+    
+    public final void loadData(){
+        dsGiaoVu = GiaoVuDAO.layDanhSach("");
+    }
+    public String[][] mappingDsGiaoVu(List<GiaoVu> dsGiaoVu){
+        String[][] result = new String[dsGiaoVu.size()][Constants.giaoVuHeader.length];
+        for (int i=0;i<dsGiaoVu.size();i++){
+            GiaoVu gv = dsGiaoVu.get(i);
+            String[] giaoVuHienTai={gv.getMaGv(),gv.getHoTen(),gv.getDiaChi(),gv.getSdt(),
+                                    gv.getGioiTinh(),DateTimeUtil.convertToStringViaDate(gv.getNgaySinh()),
+                                    DateTimeUtil.convertToStringViaTimestamp(gv.getTaiKhoan().getNgayTao())};
+            result[i]=giaoVuHienTai;
+        }
+        return result;
+    }
+    public void updateTable(String keyword){
+        DefaultTableModel tableModel = (DefaultTableModel) giaoVuTable.getModel();
+        dsGiaoVu = GiaoVuDAO.layDanhSach(keyword);
+        tableModel.setDataVector(mappingDsGiaoVu(dsGiaoVu), Constants.giaoVuHeader);
+        tableModel.fireTableDataChanged();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -65,6 +96,17 @@ public class ManagerDashboard extends javax.swing.JFrame {
         ngayTaoPicker = new com.github.lgooddatepicker.components.DateTimePicker();
         thayDoiBtn = new javax.swing.JButton();
         doiMatKhauBtn = new javax.swing.JButton();
+        dangXuatBtn = new javax.swing.JButton();
+        operationsPanel = new javax.swing.JTabbedPane();
+        giaoVuPanel = new javax.swing.JPanel();
+        giaoVuScrollPane = new javax.swing.JScrollPane();
+        giaoVuTable = new JTable(new DefaultTableModel(mappingDsGiaoVu(dsGiaoVu),Constants.giaoVuHeader));
+        searchBarText = new javax.swing.JTextField();
+        timKiemBtn = new javax.swing.JButton();
+        themBtn = new javax.swing.JButton();
+        soKetQuaLabel = new javax.swing.JLabel();
+        capNhatBtn = new javax.swing.JButton();
+        xoaBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Giáo vụ");
@@ -270,10 +312,136 @@ public class ManagerDashboard extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 80);
         infoPanel.add(doiMatKhauBtn, gridBagConstraints);
 
+        dangXuatBtn.setForeground(new java.awt.Color(0, 0, 0));
+        dangXuatBtn.setText("Đăng xuất");
+        dangXuatBtn.setToolTipText("");
+        dangXuatBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dangXuatBtnActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 185);
+        infoPanel.add(dangXuatBtn, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         getContentPane().add(infoPanel, gridBagConstraints);
+
+        giaoVuPanel.setLayout(new java.awt.GridBagLayout());
+
+        giaoVuScrollPane.setRowHeaderView(giaoVuTable);
+        giaoVuScrollPane.setViewportView(giaoVuTable);
+
+        giaoVuTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        giaoVuTable.setCellSelectionEnabled(true);
+        giaoVuTable.setRowHeight(20);
+        giaoVuTable.setShowGrid(true);
+        giaoVuScrollPane.setViewportView(giaoVuTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        giaoVuPanel.add(giaoVuScrollPane, gridBagConstraints);
+
+        searchBarText.setText("Tìm mã, họ tên, địa chỉ, số điện thoại, giới tính giáo vụ");
+        searchBarText.setToolTipText("");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.insets = new java.awt.Insets(20, 50, 0, 100);
+        giaoVuPanel.add(searchBarText, gridBagConstraints);
+
+        timKiemBtn.setText("Tìm kiếm");
+        timKiemBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timKiemBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 0, 0, 10);
+        giaoVuPanel.add(timKiemBtn, gridBagConstraints);
+
+        themBtn.setText("Thêm");
+        themBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        giaoVuPanel.add(themBtn, gridBagConstraints);
+
+        soKetQuaLabel.setForeground(new java.awt.Color(0, 0, 0));
+        soKetQuaLabel.setText(dsGiaoVu.size() + " kết quả"
+        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 60, 10, 0);
+        giaoVuPanel.add(soKetQuaLabel, gridBagConstraints);
+
+        capNhatBtn.setText("Cập nhật");
+        capNhatBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capNhatBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(50, 0, 0, 0);
+        giaoVuPanel.add(capNhatBtn, gridBagConstraints);
+
+        xoaBtn.setText("Xóa");
+        xoaBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(100, 0, 0, 0);
+        giaoVuPanel.add(xoaBtn, gridBagConstraints);
+
+        operationsPanel.addTab("Danh sách giáo vụ", giaoVuPanel);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        getContentPane().add(operationsPanel, gridBagConstraints);
 
         pack();
         setLocationRelativeTo(null);
@@ -306,6 +474,43 @@ public class ManagerDashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
         new ChangePasswordDialog(this.giaoVu.getTaiKhoan()).setVisible(true);
     }//GEN-LAST:event_doiMatKhauBtnActionPerformed
+
+    private void dangXuatBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dangXuatBtnActionPerformed
+        // TODO add your handling code here:
+        this.giaoVu = null;
+        new LoginForm().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_dangXuatBtnActionPerformed
+
+    private void timKiemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timKiemBtnActionPerformed
+        // TODO add your handling code here:
+        updateTable(searchBarText.getText());
+        soKetQuaLabel.setText(dsGiaoVu.size() + " kết quả");
+    }//GEN-LAST:event_timKiemBtnActionPerformed
+
+    private void themBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themBtnActionPerformed
+        // TODO add your handling code here:
+        new AddOrUpdateGiaoVu(Constants.ADD_MODE, 0, this).setVisible(true);
+    }//GEN-LAST:event_themBtnActionPerformed
+
+    private void capNhatBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capNhatBtnActionPerformed
+        // TODO add your handling code here:
+        int index = giaoVuTable.getSelectedRow();
+        if (index>=0){
+            GiaoVu gv = dsGiaoVu.get(index);
+            new AddOrUpdateGiaoVu(Constants.UPDATE_MODE, gv.getIdGv(), this).setVisible(true);
+        }
+    }//GEN-LAST:event_capNhatBtnActionPerformed
+
+    private void xoaBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaBtnActionPerformed
+        // TODO add your handling code here:
+        int index = giaoVuTable.getSelectedRow();
+        if (index>=0){
+            TaiKhoan tk = dsGiaoVu.get(index).getTaiKhoan();
+            TaiKhoanDAO.xoaTaiKhoan(tk.getIdTk());
+            updateTable("");
+        }
+    }//GEN-LAST:event_xoaBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -343,9 +548,14 @@ public class ManagerDashboard extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton capNhatBtn;
+    private javax.swing.JButton dangXuatBtn;
     private javax.swing.JTextField diaChiText;
     private javax.swing.JButton doiMatKhauBtn;
     private javax.swing.ButtonGroup genderBtnGroup;
+    private javax.swing.JPanel giaoVuPanel;
+    private javax.swing.JScrollPane giaoVuScrollPane;
+    private javax.swing.JTable giaoVuTable;
     private javax.swing.JPanel infoPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -359,10 +569,16 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private com.github.lgooddatepicker.components.DatePicker ngaySinhPicker;
     private com.github.lgooddatepicker.components.DateTimePicker ngayTaoPicker;
     private javax.swing.JRadioButton nuBtn;
+    private javax.swing.JTabbedPane operationsPanel;
     private javax.swing.JTextField sdtText;
+    private javax.swing.JTextField searchBarText;
+    private javax.swing.JLabel soKetQuaLabel;
     private javax.swing.JTextField tenDangNhapText;
     private javax.swing.JLabel tenGvLabel;
     private javax.swing.JTextField tenGvText;
     private javax.swing.JButton thayDoiBtn;
+    private javax.swing.JButton themBtn;
+    private javax.swing.JButton timKiemBtn;
+    private javax.swing.JButton xoaBtn;
     // End of variables declaration//GEN-END:variables
 }

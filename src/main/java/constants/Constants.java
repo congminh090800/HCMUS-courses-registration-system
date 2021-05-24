@@ -28,4 +28,7 @@ public class Constants {
     public static String WARNING = "Cảnh báo";
     public static String MISSING_PARAMS = "Thiếu thông tin hoặc thông tin không hợp lệ!";
     public static String UNAUTHORIZED = "Sai tài khoản hoặc mật khẩu";
+    public static String[] giaoVuHeader = {"Mã","Họ tên","Địa chỉ", "Sđt", "Giới tính", "Ngày sinh","Ngày tạo"};
+    public static int ADD_MODE = 0;
+    public static int UPDATE_MODE = 1;
 }

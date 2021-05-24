@@ -7,6 +7,8 @@ package utils;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -26,5 +28,19 @@ public class DateTimeUtil {
     }
     public static Date convertToDateViaLocalDate(LocalDate localDate){
         return Date.valueOf(localDate);
+    }
+    public static String convertToStringViaDate(Date date){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        return dateFormat.format(date);
+    }
+    public static String convertToStringViaTimestamp(Timestamp timeStamp){
+        Date date = new Date(timeStamp.getTime());
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);        
+    }
+    public static Date convertToDateViaString(String date){
+        return Date.valueOf(date);
+    }
+    public static Timestamp convertToTimestampViaString(String timeStamp){
+        return Timestamp.valueOf(timeStamp);
     }
 }

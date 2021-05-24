@@ -49,7 +49,7 @@ public class ChangePasswordDialog extends javax.swing.JFrame {
         matKhauMoiText = new javax.swing.JPasswordField();
         nhapLaiText = new javax.swing.JPasswordField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Đổi mật khẩu");
         setPreferredSize(new java.awt.Dimension(355, 160));
         setResizable(false);

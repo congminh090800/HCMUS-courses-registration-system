@@ -24,7 +24,7 @@ public class GiaoVuDAO {
         Session session = HibernateUtil.getSessionFactory().openSession();
         List<GiaoVu> dsGiaoVu = null;
         try {
-            String hql ="from GiaoVu gv\n"+
+            String hql ="from GiaoVu gv left join fetch gv.taiKhoan\n"+
                         (keyword.equals("")?"":"""
                                                where gv.hoTen like :keyword or gv.maGv like :keyword
                                                or gv.diaChi like :keyword or gv.sdt like :keyword
