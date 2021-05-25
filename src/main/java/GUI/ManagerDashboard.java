@@ -5,6 +5,8 @@
  */
 package GUI;
 import constants.Constants;
+import dkhp.DKHP;
+import dkhp.DKHPDAO;
 import hocki.HocKi;
 import hocki.HocKiDAO;
 import hocki.HocKiHienTai;
@@ -14,10 +16,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import lop.Lop;
+import lop.LopDAO;
 import monhoc.MonHoc;
 import monhoc.MonHocDAO;
 import taikhoan.TaiKhoan;
@@ -25,6 +30,8 @@ import taikhoan.TaiKhoanDAO;
 import utils.DateTimeUtil;
 import vaitro.GiaoVu;
 import vaitro.GiaoVuDAO;
+import vaitro.SinhVien;
+import vaitro.SinhVienDAO;
 
 /**
  *
@@ -39,6 +46,14 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private List<GiaoVu> dsGiaoVu = null;
     private List<MonHoc> dsMonHoc = null;
     private List<HocKi> dsHocKi = null;
+    private List<Lop> dsLop = null;
+    private List<DKHP> dsKiDKHP = null;
+
+    public List<Lop> getDsLop() {
+        return dsLop;
+    }
+    
+    private List<SinhVien> dsSinhVien = new ArrayList<>();
             
     public ManagerDashboard(TaiKhoan tk) {
         this.giaoVu = GiaoVuDAO.timGiaoVuTK(tk.getIdTk());
@@ -56,6 +71,11 @@ public class ManagerDashboard extends javax.swing.JFrame {
         dsGiaoVu = GiaoVuDAO.layDanhSach("");
         dsMonHoc = MonHocDAO.layDanhSach("");
         dsHocKi = HocKiDAO.dsHocKi();
+        dsLop = LopDAO.dsLop();
+        if (dsLop.size()>0){
+            dsSinhVien = LopDAO.timSvTrongLop(dsLop.get(0),"");
+        }
+        dsKiDKHP = DKHPDAO.layDanhSach();
     }
     public String[][] mappingDsGiaoVu(List<GiaoVu> dsGiaoVu){
         String[][] result = new String[dsGiaoVu.size()][Constants.giaoVuHeader.length];
@@ -72,8 +92,8 @@ public class ManagerDashboard extends javax.swing.JFrame {
         String[][] result = new String[dsMonHoc.size()][Constants.monHocHeader.length];
         for (int i=0;i<dsMonHoc.size();i++){
             MonHoc t = dsMonHoc.get(i);
-            String[] giaoVuHienTai={t.getMaMonHoc(),t.getTenMonHoc(),String.valueOf(t.getSoTinChi())};
-            result[i]=giaoVuHienTai;
+            String[] mh={t.getMaMonHoc(),t.getTenMonHoc(),String.valueOf(t.getSoTinChi())};
+            result[i]=mh;
         }
         return result;
     }
@@ -88,10 +108,58 @@ public class ManagerDashboard extends javax.swing.JFrame {
         }
         return result;        
     }
+    public String[][] mappingDsLop (List<Lop> dsLop){
+        String[][] result = new String[dsLop.size()][Constants.lopHeader.length];
+        for (int i=0;i<dsLop.size();i++){
+            Lop t = dsLop.get(i);
+            Integer soLuong = LopDAO.demSoLuongSV(t.getIdLop(), null);
+            Integer soLuongNam = LopDAO.demSoLuongSV(t.getIdLop(), "nam");
+            Integer soLuongNu = soLuong - soLuongNam;
+            String[] l={t.getTenLop(),String.valueOf(soLuong),String.valueOf(soLuongNam),String.valueOf(soLuongNu)};
+            result[i]=l;
+        }
+        return result;        
+    }
+    public String[] layDsTenLop (List<Lop> dsLop){
+        String[] result = new String[dsLop.size()];
+        for (int i=0;i<dsLop.size();i++){
+            Lop t = dsLop.get(i);
+            result[i] = t.getTenLop();
+        }
+        return result;        
+    }
+    public String[][] mappingDsSinhVien(List<SinhVien> dsSinhVien){
+        String[][] result = new String[dsSinhVien.size()][Constants.sinhVienHeader.length];
+        for (int i=0;i<dsSinhVien.size();i++){
+            SinhVien sv = dsSinhVien.get(i);
+            String[] s={sv.getMssv(),sv.getHoTen(),sv.getDiaChi(),sv.getSdt(),
+                                    sv.getGioiTinh(),DateTimeUtil.convertToStringViaDate(sv.getNgaySinh()),
+                                    DateTimeUtil.convertToStringViaTimestamp(sv.getTaiKhoan().getNgayTao()),
+                                    sv.getLop().getTenLop()};
+            result[i]=s;
+        }
+        return result;
+    }
+    public String[][] mappingDsKiDKHP(List<DKHP> dsKiDKHP){
+        String[][] result = new String[dsKiDKHP.size()][Constants.kiDKHPHeader.length];
+        for (int i=0;i<dsKiDKHP.size();i++){
+            DKHP dk = dsKiDKHP.get(i);
+            String[] d={DateTimeUtil.convertToStringViaDate(dk.getNgayBatDau()),
+                        DateTimeUtil.convertToStringViaDate(dk.getNgayKetThuc()),
+                        dk.getHocKi().getTenHocKi(),
+                        String.valueOf(dk.getHocKi().getNamHoc())};
+            result[i]=d;
+        }
+        return result;        
+    }
     public void updateAllTable(String keyword){
         updateTable(keyword);
         updateMonHocTable(keyword);
         updateHocKiTable();
+        updateLopTable();
+        updateSinhVienTable(keyword);
+        updateKiDKHPTable();
+        lopCombo.setModel(new DefaultComboBoxModel<String>(layDsTenLop(dsLop)));
     }
     public void updateTable(String keyword){
         DefaultTableModel tableModel = (DefaultTableModel) giaoVuTable.getModel();
@@ -110,6 +178,28 @@ public class ManagerDashboard extends javax.swing.JFrame {
         dsHocKi = HocKiDAO.dsHocKi();
         tableModel.setDataVector(mappingDsHocKi(dsHocKi), Constants.hocKiHeader);
         tableModel.fireTableDataChanged();        
+    }
+    public void updateLopTable(){
+        DefaultTableModel tableModel = (DefaultTableModel) lopTable.getModel();
+        dsLop = LopDAO.dsLop();
+        tableModel.setDataVector(mappingDsLop(dsLop), Constants.lopHeader);
+        tableModel.fireTableDataChanged();        
+    }
+    public void updateSinhVienTable(String keyword){
+        DefaultTableModel tableModel = (DefaultTableModel) sinhVienTable.getModel();
+        int index = lopCombo.getSelectedIndex();
+        Lop l = dsLop.get(index);
+        dsSinhVien = LopDAO.timSvTrongLop(l, keyword);
+        tableModel.setDataVector(mappingDsSinhVien(dsSinhVien), Constants.sinhVienHeader);
+        tableModel.fireTableDataChanged();
+
+        soSinhVienLabel.setText(dsSinhVien.size() + " kết quả");
+    }
+    public void updateKiDKHPTable(){
+        DefaultTableModel tableModel = (DefaultTableModel) kiDKHPTable.getModel();
+        dsKiDKHP = DKHPDAO.layDanhSach();
+        tableModel.setDataVector(mappingDsKiDKHP(dsKiDKHP), Constants.kiDKHPHeader);
+        tableModel.fireTableDataChanged();         
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -171,6 +261,26 @@ public class ManagerDashboard extends javax.swing.JFrame {
         themHocKiText = new javax.swing.JButton();
         xoaHocKiBtn = new javax.swing.JButton();
         hkhtBtn = new javax.swing.JButton();
+        lopPanel = new javax.swing.JPanel();
+        lopScrollPane = new javax.swing.JScrollPane();
+        lopTable = new JTable(new DefaultTableModel(mappingDsLop(dsLop),Constants.lopHeader));
+        xoaLopBtn = new javax.swing.JButton();
+        themLopBtn = new javax.swing.JButton();
+        sinhVienPanel = new javax.swing.JPanel();
+        timSinhVienText = new javax.swing.JTextField();
+        timSinhVienBtn = new javax.swing.JButton();
+        sinhVienScrollPane = new javax.swing.JScrollPane();
+        sinhVienTable = new JTable(new DefaultTableModel(mappingDsSinhVien(dsSinhVien),Constants.sinhVienHeader));
+        themSinhVienBtn = new javax.swing.JButton();
+        capNhatSinhVienBtn = new javax.swing.JButton();
+        xemMonSvBtn = new javax.swing.JButton();
+        soSinhVienLabel = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        lopCombo = new javax.swing.JComboBox<>();
+        moDKHPPanel = new javax.swing.JPanel();
+        kiDKHPScrollpane = new javax.swing.JScrollPane();
+        kiDKHPTable = new JTable(new DefaultTableModel(mappingDsKiDKHP(dsKiDKHP),Constants.kiDKHPHeader));
+        themKiDKHPBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Giáo vụ");
@@ -668,6 +778,217 @@ public class ManagerDashboard extends javax.swing.JFrame {
 
         operationsPanel.addTab("Học kì", hocKiPanel);
 
+        lopPanel.setLayout(new java.awt.GridBagLayout());
+
+        lopScrollPane.setRowHeaderView(lopTable);
+        lopScrollPane.setViewportView(lopTable);
+
+        lopTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        lopTable.setCellSelectionEnabled(true);
+        lopTable.setRowHeight(20);
+        lopTable.setShowGrid(true);
+        lopScrollPane.setViewportView(lopTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(30, 0, 0, 10);
+        lopPanel.add(lopScrollPane, gridBagConstraints);
+
+        xoaLopBtn.setText("Xóa");
+        xoaLopBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaLopBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 0.05;
+        gridBagConstraints.insets = new java.awt.Insets(80, 0, 0, 0);
+        lopPanel.add(xoaLopBtn, gridBagConstraints);
+
+        themLopBtn.setText("Thêm");
+        themLopBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themLopBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 0.05;
+        gridBagConstraints.insets = new java.awt.Insets(30, 0, 0, 0);
+        lopPanel.add(themLopBtn, gridBagConstraints);
+
+        operationsPanel.addTab("Lớp học", lopPanel);
+
+        sinhVienPanel.setLayout(new java.awt.GridBagLayout());
+
+        timSinhVienText.setText("Tìm mã, họ tên, địa chỉ, số điện thoại, giới tính sinh viên");
+        timSinhVienText.setToolTipText("");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.insets = new java.awt.Insets(20, 300, 0, 100);
+        sinhVienPanel.add(timSinhVienText, gridBagConstraints);
+
+        timSinhVienBtn.setText("Tìm kiếm");
+        timSinhVienBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timSinhVienBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 0, 0, 10);
+        sinhVienPanel.add(timSinhVienBtn, gridBagConstraints);
+
+        sinhVienScrollPane.setRowHeaderView(sinhVienTable);
+        sinhVienScrollPane.setViewportView(sinhVienTable);
+
+        sinhVienTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        sinhVienTable.setCellSelectionEnabled(true);
+        sinhVienTable.setRowHeight(20);
+        sinhVienTable.setShowGrid(true);
+        sinhVienScrollPane.setViewportView(sinhVienTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        sinhVienPanel.add(sinhVienScrollPane, gridBagConstraints);
+
+        themSinhVienBtn.setText("Thêm");
+        themSinhVienBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themSinhVienBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        sinhVienPanel.add(themSinhVienBtn, gridBagConstraints);
+
+        capNhatSinhVienBtn.setText("Cập nhật");
+        capNhatSinhVienBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capNhatSinhVienBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(50, 0, 0, 0);
+        sinhVienPanel.add(capNhatSinhVienBtn, gridBagConstraints);
+
+        xemMonSvBtn.setText("Xem môn");
+        xemMonSvBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xemMonSvBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(100, 0, 0, 0);
+        sinhVienPanel.add(xemMonSvBtn, gridBagConstraints);
+
+        soSinhVienLabel.setText(dsSinhVien.size() + " kết quả"
+        );
+        soSinhVienLabel.setForeground(new java.awt.Color(0, 0, 0));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 60, 10, 0);
+        sinhVienPanel.add(soSinhVienLabel, gridBagConstraints);
+
+        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel5.setText("Lớp:");
+        jLabel5.setToolTipText("");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 50, 0, 0);
+        sinhVienPanel.add(jLabel5, gridBagConstraints);
+
+        lopCombo.setModel(new javax.swing.DefaultComboBoxModel<>(layDsTenLop(dsLop)));
+        lopCombo.setMinimumSize(new java.awt.Dimension(200, 26));
+        lopCombo.setPreferredSize(new java.awt.Dimension(200, 26));
+        lopCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lopComboActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 80, 0, 0);
+        sinhVienPanel.add(lopCombo, gridBagConstraints);
+
+        operationsPanel.addTab("Sinh viên", sinhVienPanel);
+
+        moDKHPPanel.setLayout(new java.awt.GridBagLayout());
+
+        kiDKHPScrollpane.setRowHeaderView(kiDKHPTable);
+        kiDKHPScrollpane.setViewportView(kiDKHPTable);
+
+        kiDKHPTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        kiDKHPTable.setCellSelectionEnabled(true);
+        kiDKHPTable.setRowHeight(20);
+        kiDKHPTable.setShowGrid(true);
+        kiDKHPScrollpane.setViewportView(kiDKHPTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        moDKHPPanel.add(kiDKHPScrollpane, gridBagConstraints);
+
+        themKiDKHPBtn.setText("Thêm kì DKHP mới");
+        themKiDKHPBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themKiDKHPBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(20, 0, 0, 10);
+        moDKHPPanel.add(themKiDKHPBtn, gridBagConstraints);
+
+        operationsPanel.addTab("Mở đăng kí học phần", moDKHPPanel);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -811,6 +1132,65 @@ public class ManagerDashboard extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_hkhtBtnActionPerformed
 
+    private void themLopBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themLopBtnActionPerformed
+        // TODO add your handling code here:
+        String tenLop = JOptionPane.showInputDialog(null, "Nhập tên lớp:", "Thêm lớp", JOptionPane.PLAIN_MESSAGE);
+        if (!tenLop.equals("") && tenLop!=null){
+            if (LopDAO.taoLop(new Lop(tenLop))>0){
+                JOptionPane.showConfirmDialog(null, "Tạo lớp thành công", Constants.SUCCESS, JOptionPane.DEFAULT_OPTION);
+                updateAllTable("");
+            }else{
+                JOptionPane.showConfirmDialog(null, Constants.MISSING_PARAMS, Constants.FAIL, JOptionPane.DEFAULT_OPTION);                
+            }
+        }
+    }//GEN-LAST:event_themLopBtnActionPerformed
+
+    private void xoaLopBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaLopBtnActionPerformed
+        // TODO add your handling code here:
+        int index = lopTable.getSelectedRow();
+        if (index>=0){
+            Lop l = dsLop.get(index);
+            LopDAO.xoaLop(l.getIdLop());
+            updateAllTable("");
+        }        
+    }//GEN-LAST:event_xoaLopBtnActionPerformed
+
+    private void timSinhVienBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timSinhVienBtnActionPerformed
+        // TODO add your handling code here:
+        String keyword = timSinhVienText.getText();
+        updateSinhVienTable(keyword);
+    }//GEN-LAST:event_timSinhVienBtnActionPerformed
+
+    private void themSinhVienBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themSinhVienBtnActionPerformed
+        // TODO add your handling code here:
+        new AddOrUpdateSinhVien(Constants.ADD_MODE, 0, this).setVisible(true);
+    }//GEN-LAST:event_themSinhVienBtnActionPerformed
+
+    private void capNhatSinhVienBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capNhatSinhVienBtnActionPerformed
+        // TODO add your handling code here:
+        int index = sinhVienTable.getSelectedRow();
+        if (index>=0){
+            SinhVien s = dsSinhVien.get(index);
+            new AddOrUpdateSinhVien(Constants.UPDATE_MODE, s.getIdSv(), this).setVisible(true);
+        }
+    }//GEN-LAST:event_capNhatSinhVienBtnActionPerformed
+
+    private void xemMonSvBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xemMonSvBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_xemMonSvBtnActionPerformed
+
+    private void lopComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lopComboActionPerformed
+        // TODO add your handling code here:
+        String key = (String)lopCombo.getSelectedItem();
+        updateSinhVienTable("");
+        lopCombo.setSelectedItem(key);
+    }//GEN-LAST:event_lopComboActionPerformed
+
+    private void themKiDKHPBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themKiDKHPBtnActionPerformed
+        // TODO add your handling code here:
+        new AddKiDKHP(this).setVisible(true);
+    }//GEN-LAST:event_themKiDKHPBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -849,6 +1229,7 @@ public class ManagerDashboard extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton capNhatBtn;
     private javax.swing.JButton capNhatMonHocText;
+    private javax.swing.JButton capNhatSinhVienBtn;
     private javax.swing.JButton dangXuatBtn;
     private javax.swing.JTextField diaChiText;
     private javax.swing.JButton doiMatKhauBtn;
@@ -866,10 +1247,18 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JScrollPane kiDKHPScrollpane;
+    private javax.swing.JTable kiDKHPTable;
+    private javax.swing.JComboBox<String> lopCombo;
+    private javax.swing.JPanel lopPanel;
+    private javax.swing.JScrollPane lopScrollPane;
+    private javax.swing.JTable lopTable;
     private javax.swing.JLabel maGvLabel;
     private javax.swing.JTextField maGvText;
+    private javax.swing.JPanel moDKHPPanel;
     private javax.swing.JPanel monHocPanel;
     private javax.swing.JScrollPane monHocScrollPane;
     private javax.swing.JTable monHocTable;
@@ -880,20 +1269,31 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private javax.swing.JTabbedPane operationsPanel;
     private javax.swing.JTextField sdtText;
     private javax.swing.JTextField searchBarText;
+    private javax.swing.JPanel sinhVienPanel;
+    private javax.swing.JScrollPane sinhVienScrollPane;
+    private javax.swing.JTable sinhVienTable;
     private javax.swing.JLabel soKetQuaLabel;
     private javax.swing.JLabel soKetQuaMhLabel;
+    private javax.swing.JLabel soSinhVienLabel;
     private javax.swing.JTextField tenDangNhapText;
     private javax.swing.JLabel tenGvLabel;
     private javax.swing.JTextField tenGvText;
     private javax.swing.JButton thayDoiBtn;
     private javax.swing.JButton themBtn;
     private javax.swing.JButton themHocKiText;
+    private javax.swing.JButton themKiDKHPBtn;
+    private javax.swing.JButton themLopBtn;
     private javax.swing.JButton themMonHocText;
+    private javax.swing.JButton themSinhVienBtn;
     private javax.swing.JButton timKiemBtn;
     private javax.swing.JButton timMonHocBtn;
     private javax.swing.JTextField timMonHocText;
+    private javax.swing.JButton timSinhVienBtn;
+    private javax.swing.JTextField timSinhVienText;
+    private javax.swing.JButton xemMonSvBtn;
     private javax.swing.JButton xoaBtn;
     private javax.swing.JButton xoaHocKiBtn;
+    private javax.swing.JButton xoaLopBtn;
     private javax.swing.JButton xoaMonHocText;
     // End of variables declaration//GEN-END:variables
 }

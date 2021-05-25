@@ -39,7 +39,7 @@ public class DKHPDAO {
         DKHP dk = null;
         try {
             String hql="""
-                       select dk from DKHP dk
+                       select dk from DKHP dk left join fetch dk.hocKi
                        where dk.idDkhp=:idDkhp
                        """;
             Query query = session.createQuery(hql);

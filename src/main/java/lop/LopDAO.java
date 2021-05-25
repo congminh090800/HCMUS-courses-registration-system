@@ -98,13 +98,13 @@ public class LopDAO {
             if (gioiTinh==null){
                 hql="""
                     select count(*)
-                    from Lop l left join SinhVien sv on l.idLop=sv.lop
+                    from Lop l right join SinhVien sv on l.idLop=sv.lop
                     where l.idLop=:idLop
                     """;
             }else{
                 hql="""
                     select count(*)
-                    from Lop l left join SinhVien sv on l.idLop=sv.lop
+                    from Lop l right join SinhVien sv on l.idLop=sv.lop
                     where l.idLop=:idLop and sv.gioiTinh=:gioiTinh
                     """;            
             }            
@@ -126,8 +126,8 @@ public class LopDAO {
         try {
             String hql="""
                        select sv
-                       from Lop l left join SinhVien sv on l.idLop=sv.lop
-                       where l.idLop=:idLop and (sv.hoTen like :keyword
+                       from SinhVien sv left join fetch sv.taiKhoan left join fetch sv.lop
+                       where sv.lop.idLop=:idLop and (sv.hoTen like :keyword
                        or sv.diaChi like :keyword or sv.sdt like :keyword
                        or sv.gioiTinh like :keyword or sv.mssv like :keyword)
                        """;

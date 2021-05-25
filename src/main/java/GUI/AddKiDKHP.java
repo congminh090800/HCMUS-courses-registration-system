@@ -6,10 +6,11 @@
 package GUI;
 
 import constants.Constants;
-import hocki.HocKi;
-import hocki.HocKiDAO;
+import dkhp.DKHP;
+import dkhp.DKHPDAO;
+import hocki.HocKiHienTaiDAO;
 import java.sql.Date;
-import javax.swing.DefaultComboBoxModel;
+import java.time.LocalDate;
 import javax.swing.JOptionPane;
 import utils.DateTimeUtil;
 
@@ -17,18 +18,18 @@ import utils.DateTimeUtil;
  *
  * @author Admin
  */
-public class AddHocKi extends javax.swing.JFrame {
+public class AddKiDKHP extends javax.swing.JFrame {
 
     /**
-     * Creates new form AddHocKi
+     * Creates new form AddKiDKHP
      */
     private ManagerDashboard md;
-    public AddHocKi(ManagerDashboard md) {
+    public AddKiDKHP(ManagerDashboard md) {
         this.md = md;
         initComponents();
     }
 
-    private AddHocKi() {
+    private AddKiDKHP() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -43,27 +44,17 @@ public class AddHocKi extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        namHocSpinner = new javax.swing.JSpinner();
         ngayBatDauPicker = new com.github.lgooddatepicker.components.DatePicker();
         ngayKetThucPicker = new com.github.lgooddatepicker.components.DatePicker();
         huyBtn = new javax.swing.JButton();
         xacNhanBtn = new javax.swing.JButton();
-        hocKiCombo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Thêm học kì");
+        setTitle("Mở kì DKHP");
 
-        jLabel1.setText("Tên học kì");
+        jLabel1.setText("Ngày bắt đầu:");
 
-        jLabel2.setText("Năm học");
-
-        jLabel3.setText("Ngày bắt đầu");
-
-        jLabel4.setText("Ngày kết thúc");
-
-        namHocSpinner.setModel(new javax.swing.SpinnerNumberModel(1950, 1950, 2100, 1));
+        jLabel2.setText("Ngày kết thúc:");
 
         huyBtn.setText("Hủy bỏ");
         huyBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -73,65 +64,48 @@ public class AddHocKi extends javax.swing.JFrame {
         });
 
         xacNhanBtn.setText("Xác nhận");
+        xacNhanBtn.setToolTipText("");
         xacNhanBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 xacNhanBtnActionPerformed(evt);
             }
         });
 
-        hocKiCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "HK1", "HK2", "HK3" }));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(hocKiCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(namHocSpinner)
-                    .addComponent(ngayBatDauPicker, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(huyBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(xacNhanBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(ngayKetThucPicker, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(ngayBatDauPicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ngayKetThucPicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(huyBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(xacNhanBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(41, 41, 41)
+                .addContainerGap(50, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(hocKiCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
+                    .addComponent(ngayBatDauPicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(namHocSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(ngayBatDauPicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
                     .addComponent(ngayKetThucPicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
+                .addGap(45, 45, 45)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(huyBtn)
                     .addComponent(xacNhanBtn))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addGap(46, 46, 46))
         );
 
         pack();
@@ -145,17 +119,17 @@ public class AddHocKi extends javax.swing.JFrame {
 
     private void xacNhanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xacNhanBtnActionPerformed
         // TODO add your handling code here:
-        HocKi hocKi = new HocKi();
-        hocKi.setTenHocKi((String)hocKiCombo.getSelectedItem());
-        hocKi.setNamHoc((Integer)namHocSpinner.getValue());
-        hocKi.setNgayBatDau(DateTimeUtil.convertToDateViaLocalDate(ngayBatDauPicker.getDate()));
-        hocKi.setNgayKetThuc(DateTimeUtil.convertToDateViaLocalDate(ngayKetThucPicker.getDate()));
-        boolean result = HocKiDAO.taoHocKi(hocKi);
-        if (result){
-            JOptionPane.showConfirmDialog(null,"Tạo học kì thành công",Constants.SUCCESS,JOptionPane.DEFAULT_OPTION);
-            md.updateAllTable("");
+        Date ngayBatDau = DateTimeUtil.convertToDateViaLocalDate(ngayBatDauPicker.getDate());
+        Date ngayKetThuc = DateTimeUtil.convertToDateViaLocalDate(ngayKetThucPicker.getDate());
+        DKHP dkhp = new DKHP();
+        dkhp.setNgayBatDau(ngayBatDau);
+        dkhp.setNgayKetThuc(ngayKetThuc);
+        dkhp.setHocKi(HocKiHienTaiDAO.layThongTinHKHT().getHocki());
+        if (DKHPDAO.taoKiDKHP(dkhp)){
+            JOptionPane.showConfirmDialog(null,"Mở kì DKHP thành công",Constants.SUCCESS,JOptionPane.DEFAULT_OPTION);
+            md.updateAllTable("");            
         }else{
-            JOptionPane.showConfirmDialog(null,Constants.MISSING_PARAMS,Constants.FAIL,JOptionPane.DEFAULT_OPTION);  
+            JOptionPane.showConfirmDialog(null,"Mở DKHP thất bại",Constants.FAIL,JOptionPane.DEFAULT_OPTION);            
         }
         this.dispose();
     }//GEN-LAST:event_xacNhanBtnActionPerformed
@@ -177,32 +151,28 @@ public class AddHocKi extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddHocKi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddKiDKHP.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddHocKi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddKiDKHP.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddHocKi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddKiDKHP.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddHocKi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddKiDKHP.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AddHocKi().setVisible(true);
+                new AddKiDKHP().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> hocKiCombo;
     private javax.swing.JButton huyBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JSpinner namHocSpinner;
     private com.github.lgooddatepicker.components.DatePicker ngayBatDauPicker;
     private com.github.lgooddatepicker.components.DatePicker ngayKetThucPicker;
     private javax.swing.JButton xacNhanBtn;

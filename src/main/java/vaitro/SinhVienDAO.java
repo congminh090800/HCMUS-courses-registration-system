@@ -8,6 +8,7 @@ package vaitro;
 import java.io.Serializable;
 import java.util.List;
 import lop.Lop;
+import lop.LopDAO;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -38,7 +39,16 @@ public class SinhVienDAO {
         Session session = HibernateUtil.getSessionFactory().openSession();
         SinhVien sinhVien = null;
         try {
-            sinhVien = (SinhVien) session.get(SinhVien.class,(Serializable)idSv);
+            String hql = """
+             select sv from SinhVien sv left join fetch sv.taiKhoan left join fetch sv.lop
+             where sv.idSv=:idSv
+             """;
+            Query query = session.createQuery(hql);
+            query.setParameter("idSv",idSv);
+            List<SinhVien> dsSV = query.getResultList();
+            if (dsSV.size()>0){
+                sinhVien = dsSV.get(0);
+            }
         } catch (HibernateException ex) {
             System.err.println(ex);
         } finally {
@@ -48,7 +58,7 @@ public class SinhVienDAO {
     }
     
     /*  return 0 if operation failed, otherwise return generated id */
-    public static Integer themSinhVien(SinhVien sinhVien, Lop lop){
+    public static Integer themSinhVien(SinhVien sinhVien, Integer idLop){
         Session session = HibernateUtil.getSessionFactory().openSession();
         Integer result = 0;
         if (timSinhVien(sinhVien.getIdSv())!=null || TaiKhoanDAO.timTaiKhoan(sinhVien.getMssv())!=null){
@@ -57,6 +67,7 @@ public class SinhVienDAO {
             Integer id = TaiKhoanDAO.taoTaiKhoan(new TKSinhVien(sinhVien.getMssv(),sinhVien.getMssv(),"sinh viên"));
             TKSinhVien tkSv = (TKSinhVien) TaiKhoanDAO.timTaiKhoan(id);
             sinhVien.setTaiKhoan(tkSv);
+            Lop lop = LopDAO.timLop(idLop);
             sinhVien.setLop(lop);
         }
         try{
