@@ -148,20 +148,22 @@ public class SinhVienHocPhanDAO {
         return true;        
     }
     
-    public static List<SinhVien> xemSvTrongHp(HocPhan hocPhan){
+    public static List<SinhVienHocPhan> xemSvTrongHp(HocPhan hocPhan, String keyword){
         Session session = HibernateUtil.getSessionFactory().openSession();
         String maHocPhan = hocPhan.getMaHocPhan();
-        List<SinhVien> result = null;
+        List<SinhVienHocPhan> result = null;
         try {
             String hql="""
-                       select sv
+                       select svhp
                        from SinhVienHocPhan svhp left join SinhVien sv on svhp.sinhVien.idSv=sv.idSv
                        left join HocPhan hp on hp.maHocPhan=svhp.hocPhan.maHocPhan
-                       where hp.maHocPhan=:maHocPhan
+                       where hp.maHocPhan=:maHocPhan and
+                       (sv.mssv like :keyword or sv.hoTen like :keyword or hp.maHocPhan like :keyword)
                        """;
             Query query = session.createQuery(hql);
             query.setParameter("maHocPhan", maHocPhan);
-            result =(List<SinhVien>)query.getResultList();
+            query.setParameter("keyword", "%"+keyword+"%");
+            result =(List<SinhVienHocPhan>)query.getResultList();
         } catch (HibernateException ex) {
             System.err.println(ex);
         } finally {

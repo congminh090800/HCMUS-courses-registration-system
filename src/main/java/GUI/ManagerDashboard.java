@@ -7,10 +7,13 @@ package GUI;
 import constants.Constants;
 import dkhp.DKHP;
 import dkhp.DKHPDAO;
+import dkhp.SinhVienHocPhanDAO;
 import hocki.HocKi;
 import hocki.HocKiDAO;
 import hocki.HocKiHienTai;
 import hocki.HocKiHienTaiDAO;
+import hocphan.HocPhan;
+import hocphan.HocPhanDAO;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,9 +51,18 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private List<HocKi> dsHocKi = null;
     private List<Lop> dsLop = null;
     private List<DKHP> dsKiDKHP = null;
+    private List<HocPhan> dsHocPhan = null;
 
     public List<Lop> getDsLop() {
         return dsLop;
+    }
+
+    public List<HocPhan> getDsHocPhan() {
+        return dsHocPhan;
+    }
+
+    public List<MonHoc> getDsMonHoc() {
+        return dsMonHoc;
     }
     
     private List<SinhVien> dsSinhVien = new ArrayList<>();
@@ -76,6 +88,7 @@ public class ManagerDashboard extends javax.swing.JFrame {
             dsSinhVien = LopDAO.timSvTrongLop(dsLop.get(0),"");
         }
         dsKiDKHP = DKHPDAO.layDanhSach();
+        dsHocPhan = HocPhanDAO.layDanhSach("");
     }
     public String[][] mappingDsGiaoVu(List<GiaoVu> dsGiaoVu){
         String[][] result = new String[dsGiaoVu.size()][Constants.giaoVuHeader.length];
@@ -152,6 +165,22 @@ public class ManagerDashboard extends javax.swing.JFrame {
         }
         return result;        
     }
+    public String[][] mappingDsHocPhan(List<HocPhan> dsHocPhan){
+        String[][] result = new String[dsHocPhan.size()][Constants.hocPhanHeader.length];
+        for (int i=0;i<dsHocPhan.size();i++){
+            HocPhan hp = dsHocPhan.get(i);
+            String[] d={
+                hp.getMaHocPhan(), hp.getMonHoc().getTenMonHoc(),String.valueOf(hp.getMonHoc().getSoTinChi()),
+                hp.getGvLyThuyet(),String.valueOf(hp.getSoLuongToiDa()),hp.getNgayHoc(),
+                String.valueOf(hp.getNgayHoc()), caHocIntToString(hp.getCaHoc()),hp.getTenPhongHoc()                   
+            };
+            result[i]=d;
+        }
+        return result;    
+    }
+    public String caHocIntToString(int index){
+        return Constants.caHocStrings[index];
+    }
     public void updateAllTable(String keyword){
         updateTable(keyword);
         updateMonHocTable(keyword);
@@ -159,6 +188,7 @@ public class ManagerDashboard extends javax.swing.JFrame {
         updateLopTable();
         updateSinhVienTable(keyword);
         updateKiDKHPTable();
+        updateHocPhanTable(keyword);
         lopCombo.setModel(new DefaultComboBoxModel<String>(layDsTenLop(dsLop)));
     }
     public void updateTable(String keyword){
@@ -166,18 +196,20 @@ public class ManagerDashboard extends javax.swing.JFrame {
         dsGiaoVu = GiaoVuDAO.layDanhSach(keyword);
         tableModel.setDataVector(mappingDsGiaoVu(dsGiaoVu), Constants.giaoVuHeader);
         tableModel.fireTableDataChanged();
+        soKetQuaLabel.setText(dsGiaoVu.size() + " kết quả");
     }
     public void updateMonHocTable(String keyword){
         DefaultTableModel tableModel = (DefaultTableModel) monHocTable.getModel();
         dsMonHoc = MonHocDAO.layDanhSach(keyword);
         tableModel.setDataVector(mappingDsMonHoc(dsMonHoc), Constants.monHocHeader);
-        tableModel.fireTableDataChanged();        
+        tableModel.fireTableDataChanged();      
+        soKetQuaMhLabel.setText(dsMonHoc.size() + " kết quả");
     }
     public void updateHocKiTable(){
         DefaultTableModel tableModel = (DefaultTableModel) hocKiTable.getModel();
         dsHocKi = HocKiDAO.dsHocKi();
         tableModel.setDataVector(mappingDsHocKi(dsHocKi), Constants.hocKiHeader);
-        tableModel.fireTableDataChanged();        
+        tableModel.fireTableDataChanged(); 
     }
     public void updateLopTable(){
         DefaultTableModel tableModel = (DefaultTableModel) lopTable.getModel();
@@ -200,6 +232,13 @@ public class ManagerDashboard extends javax.swing.JFrame {
         dsKiDKHP = DKHPDAO.layDanhSach();
         tableModel.setDataVector(mappingDsKiDKHP(dsKiDKHP), Constants.kiDKHPHeader);
         tableModel.fireTableDataChanged();         
+    }
+    public void updateHocPhanTable(String keyword){
+        DefaultTableModel tableModel = (DefaultTableModel) hocPhanTable.getModel();
+        dsHocPhan = HocPhanDAO.layDanhSach(keyword);
+        tableModel.setDataVector(mappingDsHocPhan(dsHocPhan), Constants.hocPhanHeader);
+        tableModel.fireTableDataChanged();   
+        soHocPhanLabel.setText(dsHocPhan.size() + " kết quả");
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -281,6 +320,15 @@ public class ManagerDashboard extends javax.swing.JFrame {
         kiDKHPScrollpane = new javax.swing.JScrollPane();
         kiDKHPTable = new JTable(new DefaultTableModel(mappingDsKiDKHP(dsKiDKHP),Constants.kiDKHPHeader));
         themKiDKHPBtn = new javax.swing.JButton();
+        hocPhanPanel = new javax.swing.JPanel();
+        themHocPhan = new javax.swing.JButton();
+        timHocPhanText = new javax.swing.JTextField();
+        soHocPhanLabel = new javax.swing.JLabel();
+        hocPhanScrollPane = new javax.swing.JScrollPane();
+        hocPhanTable = new JTable(new DefaultTableModel(mappingDsHocPhan(dsHocPhan),Constants.hocPhanHeader));
+        timHocPhanBtn = new javax.swing.JButton();
+        xemDangKiBtn = new javax.swing.JButton();
+        xoaHocPhanBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Giáo vụ");
@@ -693,9 +741,9 @@ public class ManagerDashboard extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(100, 0, 0, 0);
         monHocPanel.add(xoaMonHocText, gridBagConstraints);
 
-        soKetQuaMhLabel.setForeground(new java.awt.Color(0, 0, 0));
         soKetQuaMhLabel.setText(dsGiaoVu.size() + " kết quả"
         );
+        soKetQuaMhLabel.setForeground(new java.awt.Color(0, 0, 0));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -989,6 +1037,104 @@ public class ManagerDashboard extends javax.swing.JFrame {
 
         operationsPanel.addTab("Mở đăng kí học phần", moDKHPPanel);
 
+        hocPhanPanel.setLayout(new java.awt.GridBagLayout());
+
+        themHocPhan.setText("Thêm học phần");
+        themHocPhan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themHocPhanActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        hocPhanPanel.add(themHocPhan, gridBagConstraints);
+
+        timHocPhanText.setText("Tìm mã môn,  tên môn, giáo viên, phòng học");
+        timHocPhanText.setToolTipText("");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.insets = new java.awt.Insets(20, 50, 0, 100);
+        hocPhanPanel.add(timHocPhanText, gridBagConstraints);
+
+        soHocPhanLabel.setForeground(new java.awt.Color(0, 0, 0));
+        soHocPhanLabel.setText(dsGiaoVu.size() + " kết quả"
+        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 60, 10, 0);
+        hocPhanPanel.add(soHocPhanLabel, gridBagConstraints);
+
+        hocPhanScrollPane.setRowHeaderView(hocPhanTable);
+        hocPhanScrollPane.setViewportView(hocPhanTable);
+
+        hocPhanTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        hocPhanTable.setCellSelectionEnabled(true);
+        hocPhanTable.setRowHeight(20);
+        hocPhanTable.setShowGrid(true);
+        hocPhanScrollPane.setViewportView(hocPhanTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        hocPhanPanel.add(hocPhanScrollPane, gridBagConstraints);
+
+        timHocPhanBtn.setText("Tìm kiếm");
+        timHocPhanBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timHocPhanBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 0, 0, 10);
+        hocPhanPanel.add(timHocPhanBtn, gridBagConstraints);
+
+        xemDangKiBtn.setText("Xem đăng kí");
+        xemDangKiBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xemDangKiBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(50, 0, 0, 0);
+        hocPhanPanel.add(xemDangKiBtn, gridBagConstraints);
+
+        xoaHocPhanBtn.setText("Xóa học phần");
+        xoaHocPhanBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xoaHocPhanBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(100, 0, 0, 0);
+        hocPhanPanel.add(xoaHocPhanBtn, gridBagConstraints);
+
+        operationsPanel.addTab("Học phần", hocPhanPanel);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -1041,7 +1187,6 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private void timKiemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timKiemBtnActionPerformed
         // TODO add your handling code here:
         updateTable(searchBarText.getText());
-        soKetQuaLabel.setText(dsGiaoVu.size() + " kết quả");
     }//GEN-LAST:event_timKiemBtnActionPerformed
 
     private void themBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themBtnActionPerformed
@@ -1071,7 +1216,6 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private void timMonHocBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timMonHocBtnActionPerformed
         // TODO add your handling code here:
         updateMonHocTable(timMonHocText.getText());
-        soKetQuaMhLabel.setText(dsMonHoc.size() + " kết quả");
     }//GEN-LAST:event_timMonHocBtnActionPerformed
 
     private void capNhatMonHocTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capNhatMonHocTextActionPerformed
@@ -1177,6 +1321,8 @@ public class ManagerDashboard extends javax.swing.JFrame {
 
     private void xemMonSvBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xemMonSvBtnActionPerformed
         // TODO add your handling code here:
+        SinhVien sv = dsSinhVien.get(sinhVienTable.getSelectedRow());
+        new XemMon(sv).setVisible(true);
     }//GEN-LAST:event_xemMonSvBtnActionPerformed
 
     private void lopComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lopComboActionPerformed
@@ -1190,6 +1336,30 @@ public class ManagerDashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
         new AddKiDKHP(this).setVisible(true);
     }//GEN-LAST:event_themKiDKHPBtnActionPerformed
+
+    private void themHocPhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themHocPhanActionPerformed
+        // TODO add your handling code here:
+        new AddHocPhan(this).setVisible(true);
+    }//GEN-LAST:event_themHocPhanActionPerformed
+
+    private void timHocPhanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timHocPhanBtnActionPerformed
+        // TODO add your handling code here:
+        String keyword = timHocPhanText.getText();
+        updateHocPhanTable(keyword);
+    }//GEN-LAST:event_timHocPhanBtnActionPerformed
+
+    private void xemDangKiBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xemDangKiBtnActionPerformed
+        // TODO add your handling code here:
+        HocPhan hp = dsHocPhan.get(hocPhanTable.getSelectedRow());
+        new DsSvTrongHp(hp).setVisible(true);
+    }//GEN-LAST:event_xemDangKiBtnActionPerformed
+
+    private void xoaHocPhanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xoaHocPhanBtnActionPerformed
+        // TODO add your handling code here:
+        HocPhan hp = dsHocPhan.get(hocPhanTable.getSelectedRow());
+        HocPhanDAO.xoaHocPhan(hp.getMaHocPhan());
+        updateAllTable("");
+    }//GEN-LAST:event_xoaHocPhanBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1242,6 +1412,9 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private javax.swing.JPanel hocKiPanel;
     private javax.swing.JScrollPane hocKiScrollPane;
     private javax.swing.JTable hocKiTable;
+    private javax.swing.JPanel hocPhanPanel;
+    private javax.swing.JScrollPane hocPhanScrollPane;
+    private javax.swing.JTable hocPhanTable;
     private javax.swing.JPanel infoPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1272,6 +1445,7 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private javax.swing.JPanel sinhVienPanel;
     private javax.swing.JScrollPane sinhVienScrollPane;
     private javax.swing.JTable sinhVienTable;
+    private javax.swing.JLabel soHocPhanLabel;
     private javax.swing.JLabel soKetQuaLabel;
     private javax.swing.JLabel soKetQuaMhLabel;
     private javax.swing.JLabel soSinhVienLabel;
@@ -1281,18 +1455,23 @@ public class ManagerDashboard extends javax.swing.JFrame {
     private javax.swing.JButton thayDoiBtn;
     private javax.swing.JButton themBtn;
     private javax.swing.JButton themHocKiText;
+    private javax.swing.JButton themHocPhan;
     private javax.swing.JButton themKiDKHPBtn;
     private javax.swing.JButton themLopBtn;
     private javax.swing.JButton themMonHocText;
     private javax.swing.JButton themSinhVienBtn;
+    private javax.swing.JButton timHocPhanBtn;
+    private javax.swing.JTextField timHocPhanText;
     private javax.swing.JButton timKiemBtn;
     private javax.swing.JButton timMonHocBtn;
     private javax.swing.JTextField timMonHocText;
     private javax.swing.JButton timSinhVienBtn;
     private javax.swing.JTextField timSinhVienText;
+    private javax.swing.JButton xemDangKiBtn;
     private javax.swing.JButton xemMonSvBtn;
     private javax.swing.JButton xoaBtn;
     private javax.swing.JButton xoaHocKiBtn;
+    private javax.swing.JButton xoaHocPhanBtn;
     private javax.swing.JButton xoaLopBtn;
     private javax.swing.JButton xoaMonHocText;
     // End of variables declaration//GEN-END:variables

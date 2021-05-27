@@ -14,6 +14,7 @@ public class Constants {
     public static String CA_2="9:30 - 11:30";
     public static String CA_3="13:30 - 15:30";
     public static String CA_4="15:30 - 17:30";
+    public static String[] caHocStrings={CA_1,CA_2,CA_3,CA_4};
     public static String MON="thứ 2";
     public static String SAT="thứ 7";
     public static String TUE="thứ 3";
@@ -34,6 +35,13 @@ public class Constants {
     public static String[] lopHeader = {"Tên lớp","Số lượng sinh viên","Số nam","Số nữ"};
     public static String[] sinhVienHeader = {"Mã","Họ tên","Địa chỉ", "Sđt", "Giới tính", "Ngày sinh","Ngày tạo","Tên lớp"};
     public static String[] kiDKHPHeader = {"Ngày bắt đầu","Ngày kết thúc","Tên học kì", "Năm học"};
+    public static String[] hocPhanHeader = {"Mã học phần", "Tên môn", "Số tín chỉ",
+                                            "GV lý thuyết","Slot tối đa","Ngày học",
+                                            "Ca học","Tên phòng học"};
+    public static String[] svHpHeader = {
+        "MSSV", "Họ tên", "Mã học phần", "Tên môn",
+        "Giáo viên", "Ngày học", "Ca học", "Ngày đăng kí"
+    };
     public static int ADD_MODE = 0;
     public static int UPDATE_MODE = 1;
 }
