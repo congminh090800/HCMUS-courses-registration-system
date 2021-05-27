@@ -133,7 +133,11 @@ public class LoginForm extends javax.swing.JFrame {
                 JOptionPane.showConfirmDialog(null,Constants.UNAUTHORIZED,Constants.FAIL,JOptionPane.DEFAULT_OPTION);          
             }else{
                 java.awt.EventQueue.invokeLater(() -> {
-                    new ManagerDashboard(taiKhoan).setVisible(true);
+                    if (taiKhoan.getLoaiTaiKhoan().equals("giáo vụ")){
+                        new ManagerDashboard(taiKhoan).setVisible(true);                        
+                    }else{
+                        new StudentDashboard(taiKhoan).setVisible(true);
+                    }
                 });
                 this.dispose();
             }        

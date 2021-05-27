@@ -172,7 +172,7 @@ public class ManagerDashboard extends javax.swing.JFrame {
             String[] d={
                 hp.getMaHocPhan(), hp.getMonHoc().getTenMonHoc(),String.valueOf(hp.getMonHoc().getSoTinChi()),
                 hp.getGvLyThuyet(),String.valueOf(hp.getSoLuongToiDa()),hp.getNgayHoc(),
-                String.valueOf(hp.getNgayHoc()), caHocIntToString(hp.getCaHoc()),hp.getTenPhongHoc()                   
+                caHocIntToString(hp.getCaHoc()-1),hp.getTenPhongHoc()                   
             };
             result[i]=d;
         }
@@ -741,7 +741,7 @@ public class ManagerDashboard extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(100, 0, 0, 0);
         monHocPanel.add(xoaMonHocText, gridBagConstraints);
 
-        soKetQuaMhLabel.setText(dsGiaoVu.size() + " kết quả"
+        soKetQuaMhLabel.setText(dsMonHoc.size() + " kết quả"
         );
         soKetQuaMhLabel.setForeground(new java.awt.Color(0, 0, 0));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -774,8 +774,8 @@ public class ManagerDashboard extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         hocKiPanel.add(hocKiScrollPane, gridBagConstraints);
 
-        hkhtText.setForeground(new java.awt.Color(0, 0, 0));
         hkhtText.setText("Học kì hiện tại: " + HocKiHienTaiDAO.layThongTinHKHT().getHocki().getTenHocKi()+ " " + HocKiHienTaiDAO.layThongTinHKHT().getHocki().getNamHoc());
+        hkhtText.setForeground(new java.awt.Color(0, 0, 0));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -1064,7 +1064,7 @@ public class ManagerDashboard extends javax.swing.JFrame {
         hocPhanPanel.add(timHocPhanText, gridBagConstraints);
 
         soHocPhanLabel.setForeground(new java.awt.Color(0, 0, 0));
-        soHocPhanLabel.setText(dsGiaoVu.size() + " kết quả"
+        soHocPhanLabel.setText(dsHocPhan.size() + " kết quả"
         );
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1174,7 +1174,9 @@ public class ManagerDashboard extends javax.swing.JFrame {
 
     private void doiMatKhauBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doiMatKhauBtnActionPerformed
         // TODO add your handling code here:
+        new LoginForm().setVisible(true);
         new ChangePasswordDialog(this.giaoVu.getTaiKhoan()).setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_doiMatKhauBtnActionPerformed
 
     private void dangXuatBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dangXuatBtnActionPerformed
@@ -1273,6 +1275,7 @@ public class ManagerDashboard extends javax.swing.JFrame {
             HocKi hk = dsHocKi.get(index);
             HocKiHienTaiDAO.thayDoiHKHT(hk);
             hkhtText.setText("Học kì hiện tại: " + HocKiHienTaiDAO.layThongTinHKHT().getHocki().getTenHocKi()+ " " + HocKiHienTaiDAO.layThongTinHKHT().getHocki().getNamHoc());
+            updateAllTable("");
         }
     }//GEN-LAST:event_hkhtBtnActionPerformed
 

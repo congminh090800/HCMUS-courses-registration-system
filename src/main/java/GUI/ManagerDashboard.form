@@ -341,10 +341,10 @@
         </Component>
         <Component class="javax.swing.JButton" name="doiMatKhauBtn">
           <Properties>
+            <Property name="text" type="java.lang.String" value="&#x110;&#x1ed5;i m&#x1ead;t kh&#x1ea9;u"/>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="0" red="0" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="&#x110;&#x1ed5;i m&#x1ead;t kh&#x1ea9;u"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="doiMatKhauBtnActionPerformed"/>
@@ -611,7 +611,7 @@
             <Component class="javax.swing.JLabel" name="soKetQuaMhLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="dsGiaoVu.size() + &quot; k&#x1ebf;t qu&#x1ea3;&quot;&#xd;&#xa;" type="code"/>
+                  <Connection code="dsMonHoc.size() + &quot; k&#x1ebf;t qu&#x1ea3;&quot;&#xd;&#xa;" type="code"/>
                 </Property>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
@@ -668,11 +668,11 @@
             </Container>
             <Component class="javax.swing.JLabel" name="hkhtText">
               <Properties>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="0" red="0" type="rgb"/>
-                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="&quot;H&#x1ecd;c k&#xec; hi&#x1ec7;n t&#x1ea1;i: &quot; + HocKiHienTaiDAO.layThongTinHKHT().getHocki().getTenHocKi()+ &quot; &quot; + HocKiHienTaiDAO.layThongTinHKHT().getHocki().getNamHoc()" type="code"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
               </Properties>
               <Constraints>
@@ -1047,7 +1047,7 @@
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="dsGiaoVu.size() + &quot; k&#x1ebf;t qu&#x1ea3;&quot;&#xd;&#xa;" type="code"/>
+                  <Connection code="dsHocPhan.size() + &quot; k&#x1ebf;t qu&#x1ea3;&quot;&#xd;&#xa;" type="code"/>
                 </Property>
               </Properties>
               <Constraints>

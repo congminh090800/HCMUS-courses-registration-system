@@ -8,6 +8,7 @@ package dkhp;
 import hocki.HocKi;
 import hocki.HocKiHienTai;
 import hocki.HocKiHienTaiDAO;
+import java.sql.Date;
 import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -71,5 +72,28 @@ public class DKHPDAO {
         }
         return true;
     }
-    
+    public static boolean kiemTraThoiGian(){
+        long millis=System.currentTimeMillis();  
+        Date current = new Date(millis);
+        Integer idHk = HocKiHienTaiDAO.layThongTinHKHT().getHkht();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        List<DKHP> dk = null;
+        try {
+            String hql="""
+                       select dk
+                       from DKHP dk left join fetch dk.hocKi
+                       where dk.hocKi.idHk=:idHk
+                       and (:current between dk.ngayBatDau and dk.ngayKetThuc) 
+                       """;
+            Query query = session.createQuery(hql);
+            query.setParameter("idHk", idHk);
+            query.setParameter("current", current);
+            dk = (List<DKHP>) query.getResultList();
+        } catch (HibernateException ex) {
+            System.err.println(ex);
+        } finally {
+            session.close();
+        }        
+        return dk.size()>0;
+    }
 }

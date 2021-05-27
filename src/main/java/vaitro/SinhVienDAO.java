@@ -56,7 +56,27 @@ public class SinhVienDAO {
         }   
         return sinhVien;
     }
-    
+     public static SinhVien timSinhVienTK(Integer idTk){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        SinhVien sinhVien = null;
+        try {
+            String hql = """
+                         select sv from SinhVien sv left join fetch sv.taiKhoan left join fetch sv.lop
+                         where sv.taiKhoan.idTk=:idTk
+                         """;
+            Query query = session.createQuery(hql);
+            query.setParameter("idTk",idTk);
+            List<SinhVien> dsSV = query.getResultList();
+            if (dsSV.size()>0){
+                sinhVien = dsSV.get(0);
+            }   
+        } catch (HibernateException ex) {
+            System.err.println(ex);
+        } finally {
+            session.close();
+        }   
+        return sinhVien;
+    }   
     /*  return 0 if operation failed, otherwise return generated id */
     public static Integer themSinhVien(SinhVien sinhVien, Integer idLop){
         Session session = HibernateUtil.getSessionFactory().openSession();

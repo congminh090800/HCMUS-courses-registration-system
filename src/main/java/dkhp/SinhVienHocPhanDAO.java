@@ -128,7 +128,27 @@ public class SinhVienHocPhanDAO {
         }
         return svhp;        
     }
-    
+    public static SinhVienHocPhan timSVHP(Integer idSv, String maHocPhan){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        SinhVienHocPhan svhp = null;
+        try {
+            String hql="""
+                       select svhp from SinhVienHocPhan svhp
+                       left join SinhVien sv on sv.idSv = svhp.sinhVien.idSv
+                       left join HocPhan hp on hp.maHocPhan = svhp.hocPhan.maHocPhan
+                       where sv.idSv=:idSv and hp.maHocPhan=:maHocPhan
+                       """;
+            Query query = session.createQuery(hql);
+            query.setParameter("idSv", idSv);
+            query.setParameter("maHocPhan", maHocPhan);
+            svhp = (SinhVienHocPhan) query.uniqueResult();
+        } catch (HibernateException ex) {
+            System.err.println(ex);
+        } finally {
+            session.close();
+        }
+        return svhp;        
+    }    
     public static boolean huyDKHP(Integer idSvhp){
         Session session = HibernateUtil.getSessionFactory().openSession();
         SinhVienHocPhan svhp = timSVHP(idSvhp);
@@ -178,8 +198,9 @@ public class SinhVienHocPhanDAO {
         try {
             String hql="""
                        select hp
-                       from SinhVienHocPhan svhp left join SinhVien sv on svhp.sinhVien.idSv=sv.idSv
-                       left join HocPhan hp on hp.maHocPhan=svhp.hocPhan.maHocPhan
+                       from SinhVienHocPhan svhp join SinhVien sv on svhp.sinhVien.idSv=sv.idSv
+                       join HocPhan hp on hp.maHocPhan=svhp.hocPhan.maHocPhan
+                       join MonHoc mh on mh.maMonHoc = hp.monHoc.maMonHoc
                        where sv.idSv=:idSv
                        """;
             Query query = session.createQuery(hql);

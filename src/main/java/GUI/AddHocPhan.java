@@ -82,7 +82,7 @@ public class AddHocPhan extends javax.swing.JFrame {
         huyBtn = new javax.swing.JButton();
         xacNhanBtn = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thêm học phần");
 
         jLabel1.setText("Môn học:");
@@ -104,6 +104,11 @@ public class AddHocPhan extends javax.swing.JFrame {
         ngayCombo.setModel(new javax.swing.DefaultComboBoxModel<>(ngayTrongTuan()));
 
         caCombo.setModel(new javax.swing.DefaultComboBoxModel<>(caHocStrings()));
+        caCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                caComboActionPerformed(evt);
+            }
+        });
 
         huyBtn.setText("Hủy bỏ");
         huyBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -209,6 +214,10 @@ public class AddHocPhan extends javax.swing.JFrame {
         }
         this.dispose();
     }//GEN-LAST:event_xacNhanBtnActionPerformed
+
+    private void caComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_caComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_caComboActionPerformed
 
     /**
      * @param args the command line arguments
