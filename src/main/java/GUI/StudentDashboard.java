@@ -625,7 +625,7 @@ public class StudentDashboard extends javax.swing.JFrame {
             return;
         }
         HocPhan hocPhan = dsHocPhan.get(hocPhanTable.getSelectedRow());
-        if(hocPhan.getSoLuongToiDa()<SinhVienHocPhanDAO.xemSvTrongHp(hocPhan, "").size()){
+        if(hocPhan.getSoLuongToiDa()<=SinhVienHocPhanDAO.xemSvTrongHp(hocPhan, "").size()){
             JOptionPane.showConfirmDialog(null,"Học phần này đã hết slot",Constants.FAIL,JOptionPane.DEFAULT_OPTION);                                
         }else if (SinhVienHocPhanDAO.daDangKiMon(sinhVien, hocPhan)){
             JOptionPane.showConfirmDialog(null,"Đã đăng kí môn này",Constants.FAIL,JOptionPane.DEFAULT_OPTION);                        
