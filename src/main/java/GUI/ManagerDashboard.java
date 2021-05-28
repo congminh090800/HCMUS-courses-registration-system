@@ -520,8 +520,8 @@ public class ManagerDashboard extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         infoPanel.add(thayDoiBtn, gridBagConstraints);
 
-        doiMatKhauBtn.setForeground(new java.awt.Color(0, 0, 0));
         doiMatKhauBtn.setText("Đổi mật khẩu");
+        doiMatKhauBtn.setForeground(new java.awt.Color(0, 0, 0));
         doiMatKhauBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 doiMatKhauBtnActionPerformed(evt);
@@ -1167,6 +1167,7 @@ public class ManagerDashboard extends javax.swing.JFrame {
         giaoVu.setSdt(sdtText.getText());
         if (GiaoVuDAO.capNhatThongTin(giaoVu)){
             JOptionPane.showConfirmDialog(null,Constants.SUCCESS,"Cập nhật thành công",JOptionPane.DEFAULT_OPTION);
+            updateAllTable("");
         }else{
             JOptionPane.showConfirmDialog(null,Constants.FAIL,"Thông tin không hợp lệ!",JOptionPane.DEFAULT_OPTION);            
         }

@@ -592,6 +592,7 @@ public class StudentDashboard extends javax.swing.JFrame {
         sinhVien.setLop(lopHienTai);
         if (SinhVienDAO.capNhatThongTin(sinhVien)){
             JOptionPane.showConfirmDialog(null,Constants.SUCCESS,"Cập nhật thành công",JOptionPane.DEFAULT_OPTION);
+            updateAllTable("");
         }else{
             JOptionPane.showConfirmDialog(null,Constants.FAIL,"Thông tin không hợp lệ!",JOptionPane.DEFAULT_OPTION);            
         }
@@ -624,7 +625,9 @@ public class StudentDashboard extends javax.swing.JFrame {
             return;
         }
         HocPhan hocPhan = dsHocPhan.get(hocPhanTable.getSelectedRow());
-        if (SinhVienHocPhanDAO.daDangKiMon(sinhVien, hocPhan)){
+        if(hocPhan.getSoLuongToiDa()<SinhVienHocPhanDAO.xemSvTrongHp(hocPhan, "").size()){
+            JOptionPane.showConfirmDialog(null,"Học phần này đã hết slot",Constants.FAIL,JOptionPane.DEFAULT_OPTION);                                
+        }else if (SinhVienHocPhanDAO.daDangKiMon(sinhVien, hocPhan)){
             JOptionPane.showConfirmDialog(null,"Đã đăng kí môn này",Constants.FAIL,JOptionPane.DEFAULT_OPTION);                        
         }else if (SinhVienHocPhanDAO.trungThoiGianHoc(sinhVien, hocPhan)){
             JOptionPane.showConfirmDialog(null,"Trùng thời gian với một học phần đã đăng kí",Constants.FAIL,JOptionPane.DEFAULT_OPTION);                        
