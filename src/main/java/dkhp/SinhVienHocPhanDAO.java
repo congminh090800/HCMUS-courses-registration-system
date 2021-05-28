@@ -6,6 +6,7 @@
 package dkhp;
 
 import constants.Constants;
+import hocki.HocKiHienTaiDAO;
 import hocphan.HocPhan;
 import java.util.List;
 import monhoc.MonHoc;
@@ -24,17 +25,19 @@ public class SinhVienHocPhanDAO {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Integer idSv = sv.getIdSv();
         String maMonHoc = hp.getMonHoc().getMaMonHoc();
+        Integer idHk = HocKiHienTaiDAO.layThongTinHKHT().getHkht();                
         Integer result = 0;
         try {
             String hql="""
                        select count(distinct hp.monHoc)
                        from SinhVienHocPhan svhp left join SinhVien sv on svhp.sinhVien.idSv=sv.idSv
                        left join HocPhan hp on hp.maHocPhan=svhp.hocPhan.maHocPhan
-                       where sv.idSv=:idSv and hp.monHoc.maMonHoc=:maMonHoc
+                       where sv.idSv=:idSv and hp.monHoc.maMonHoc=:maMonHoc and hp.hocKi.idHk=:idHk
                        """;
             Query query = session.createQuery(hql);
             query.setParameter("idSv", idSv);
             query.setParameter("maMonHoc", maMonHoc);
+            query.setParameter("idHk", idHk);
             result = ((Long)query.uniqueResult()).intValue();
         } catch (HibernateException ex) {
             System.err.println(ex);
@@ -48,15 +51,17 @@ public class SinhVienHocPhanDAO {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Integer idSv = sv.getIdSv();
         Integer result = 0;
+        Integer idHk = HocKiHienTaiDAO.layThongTinHKHT().getHkht();                
         try {
             String hql="""
                        select count(distinct hp.monHoc)
                        from SinhVienHocPhan svhp left join SinhVien sv on svhp.sinhVien.idSv=sv.idSv
                        left join HocPhan hp on hp.maHocPhan=svhp.hocPhan.maHocPhan
-                       where sv.idSv=:idSv
+                       where sv.idSv=:idSv and hp.hocKi.idHk=:idHk
                        """;
             Query query = session.createQuery(hql);
             query.setParameter("idSv", idSv);
+            query.setParameter("idHk", idHk);
             result = ((Long)query.uniqueResult()).intValue();
         } catch (HibernateException ex) {
             System.err.println(ex);
@@ -71,18 +76,20 @@ public class SinhVienHocPhanDAO {
         Integer idSv = sv.getIdSv();
         String ngayHoc = hp.getNgayHoc();
         Integer caHoc = hp.getCaHoc();
+        Integer idHk = HocKiHienTaiDAO.layThongTinHKHT().getHkht();        
         Integer result = 0;
         try {
             String hql="""
                        select count(distinct hp.monHoc)
                        from SinhVienHocPhan svhp left join SinhVien sv on svhp.sinhVien.idSv=sv.idSv
                        left join HocPhan hp on hp.maHocPhan=svhp.hocPhan.maHocPhan
-                       where sv.idSv=:idSv and hp.ngayHoc=:ngayHoc and hp.caHoc=:caHoc
+                       where sv.idSv=:idSv and hp.ngayHoc=:ngayHoc and hp.caHoc=:caHoc and hp.hocKi.idHk=:idHk
                        """;
             Query query = session.createQuery(hql);
             query.setParameter("idSv", idSv);
             query.setParameter("ngayHoc", ngayHoc);
             query.setParameter("caHoc", caHoc);
+            query.setParameter("idHk", idHk);
             result = ((Long)query.uniqueResult()).intValue();
         } catch (HibernateException ex) {
             System.err.println(ex);
@@ -194,17 +201,18 @@ public class SinhVienHocPhanDAO {
     public static List<HocPhan> xemHpCuaSv(SinhVien sinhVien){
         Session session = HibernateUtil.getSessionFactory().openSession();
         Integer idSv = sinhVien.getIdSv();
+        Integer idHk = HocKiHienTaiDAO.layThongTinHKHT().getHkht();
         List<HocPhan> result = null;
         try {
             String hql="""
                        select hp
-                       from SinhVienHocPhan svhp join SinhVien sv on svhp.sinhVien.idSv=sv.idSv
-                       join HocPhan hp on hp.maHocPhan=svhp.hocPhan.maHocPhan
-                       join MonHoc mh on mh.maMonHoc = hp.monHoc.maMonHoc
-                       where sv.idSv=:idSv
+                       from HocPhan hp left join fetch hp.monHoc left join fetch hp.hocKi, SinhVienHocPhan svhp, SinhVien sv
+                       where sv.idSv=:idSv and hp.maHocPhan=svhp.hocPhan.maHocPhan
+                       and sv.idSv=svhp.sinhVien.idSv and hp.hocKi.idHk=:idHk
                        """;
             Query query = session.createQuery(hql);
             query.setParameter("idSv", idSv);
+            query.setParameter("idHk", idHk);
             result =(List<HocPhan>)query.getResultList();
         } catch (HibernateException ex) {
             System.err.println(ex);
@@ -216,16 +224,18 @@ public class SinhVienHocPhanDAO {
     public static List<MonHoc> xemMonDaDangKi(SinhVien sinhVien){
         Session session = HibernateUtil.getSessionFactory().openSession();
         Integer idSv = sinhVien.getIdSv();
+        Integer idHk = HocKiHienTaiDAO.layThongTinHKHT().getHkht();
         List<MonHoc> result = null;
         try {
             String hql="""
                        select distinct hp.monHoc
                        from SinhVienHocPhan svhp left join SinhVien sv on svhp.sinhVien.idSv=sv.idSv
                        left join HocPhan hp on hp.maHocPhan=svhp.hocPhan.maHocPhan
-                       where sv.idSv=:idSv
+                       where sv.idSv=:idSv and hp.hocKi.idHk = :idHk
                        """;
             Query query = session.createQuery(hql);
             query.setParameter("idSv", idSv);
+            query.setParameter("idHk", idHk);
             result =(List<MonHoc>)query.getResultList();
         } catch (HibernateException ex) {
             System.err.println(ex);

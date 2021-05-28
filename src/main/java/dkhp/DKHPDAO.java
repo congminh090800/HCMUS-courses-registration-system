@@ -96,4 +96,28 @@ public class DKHPDAO {
         }        
         return dk.size()>0;
     }
+    public static DKHP thoiGianHopLe(){
+        long millis=System.currentTimeMillis();  
+        Date current = new Date(millis);
+        Integer idHk = HocKiHienTaiDAO.layThongTinHKHT().getHkht();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        DKHP dk = null;
+        try {
+            String hql="""
+                       select dk
+                       from DKHP dk left join fetch dk.hocKi
+                       where dk.hocKi.idHk=:idHk
+                       and (:current between dk.ngayBatDau and dk.ngayKetThuc) 
+                       """;
+            Query query = session.createQuery(hql);
+            query.setParameter("idHk", idHk);
+            query.setParameter("current", current);
+            dk = (DKHP) query.uniqueResult();
+        } catch (HibernateException ex) {
+            System.err.println(ex);
+        } finally {
+            session.close();
+        }        
+        return dk;
+    }
 }

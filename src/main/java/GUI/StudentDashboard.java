@@ -15,6 +15,7 @@ import hocki.HocKiHienTai;
 import hocki.HocKiHienTaiDAO;
 import hocphan.HocPhan;
 import hocphan.HocPhanDAO;
+import java.awt.Color;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +55,6 @@ public class StudentDashboard extends javax.swing.JFrame {
         this.sinhVien = SinhVienDAO.timSinhVienTK(tk.getIdTk());
         loadData();
         initComponents();
-
     }
 
     public StudentDashboard() {
@@ -71,7 +71,7 @@ public class StudentDashboard extends javax.swing.JFrame {
     public String[][] mappingDsHocPhan(List<HocPhan> dsHocPhan){
         String[][] result = new String[dsHocPhan.size()][Constants.hocPhanHeader.length];
         for (int i=0;i<dsHocPhan.size();i++){
-            HocPhan hp = HocPhanDAO.timHocPhan(dsHocPhan.get(i).getMaHocPhan());
+            HocPhan hp = dsHocPhan.get(i);
             String[] d={
                 hp.getMaHocPhan(), hp.getMonHoc().getTenMonHoc(),String.valueOf(hp.getMonHoc().getSoTinChi()),
                 hp.getGvLyThuyet(),String.valueOf(hp.getSoLuongToiDa()),hp.getNgayHoc(),
@@ -157,6 +157,10 @@ public class StudentDashboard extends javax.swing.JFrame {
         dangXuatBtn = new javax.swing.JButton();
         lopLabel = new javax.swing.JLabel();
         lopCombo = new javax.swing.JComboBox<>();
+        jLabel5 = new javax.swing.JLabel();
+        hkhtText = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        thoiGianDKHPText = new javax.swing.JLabel();
         operationsPanel = new javax.swing.JTabbedPane();
         hocPhanPanel = new javax.swing.JPanel();
         timHocPhanText = new javax.swing.JTextField();
@@ -299,10 +303,10 @@ public class StudentDashboard extends javax.swing.JFrame {
         infoPanel.add(tenDangNhapText, gridBagConstraints);
 
         genderBtnGroup.add(namBtn);
+        namBtn.setForeground(new java.awt.Color(0, 0, 0));
         namBtn.setSelected(sinhVien.getGioiTinh().equals("nam")
         );
         namBtn.setText("nam");
-        namBtn.setForeground(new java.awt.Color(0, 0, 0));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
@@ -310,10 +314,10 @@ public class StudentDashboard extends javax.swing.JFrame {
         infoPanel.add(namBtn, gridBagConstraints);
 
         genderBtnGroup.add(nuBtn);
+        nuBtn.setForeground(new java.awt.Color(0, 0, 0));
         nuBtn.setSelected(sinhVien.getGioiTinh().equals("nữ")
         );
         nuBtn.setText("nữ");
-        nuBtn.setForeground(new java.awt.Color(0, 0, 0));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
@@ -355,7 +359,7 @@ public class StudentDashboard extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         infoPanel.add(thayDoiBtn, gridBagConstraints);
 
@@ -368,7 +372,7 @@ public class StudentDashboard extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 80);
         infoPanel.add(doiMatKhauBtn, gridBagConstraints);
@@ -383,7 +387,7 @@ public class StudentDashboard extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 185);
         infoPanel.add(dangXuatBtn, gridBagConstraints);
@@ -402,6 +406,49 @@ public class StudentDashboard extends javax.swing.JFrame {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         infoPanel.add(lopCombo, gridBagConstraints);
+
+        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel5.setText("Học kì hiện tại:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
+        infoPanel.add(jLabel5, gridBagConstraints);
+
+        hkhtText.setForeground(new java.awt.Color(0, 0, 0));
+        hkhtText.setText(HocKiHienTaiDAO.layThongTinHKHT().getHocki().getTenHocKi() + " " + HocKiHienTaiDAO.layThongTinHKHT().getHocki().getNamHoc());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
+        infoPanel.add(hkhtText, gridBagConstraints);
+
+        jLabel9.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel9.setText("Thời gian DKHP:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        infoPanel.add(jLabel9, gridBagConstraints);
+
+        thoiGianDKHPText.setBackground(new java.awt.Color(51, 51, 51));
+        thoiGianDKHPText.setForeground(new java.awt.Color(0, 0, 0));
+        DKHP dk = DKHPDAO.thoiGianHopLe();
+        if (dk!=null){
+            thoiGianDKHPText.setForeground(Color.GREEN);
+            thoiGianDKHPText.setText("Đang mở từ "+DateTimeUtil.convertToStringViaDate(dk.getNgayBatDau())+" đến "+DateTimeUtil.convertToStringViaDate(dk.getNgayKetThuc()));
+        }else{
+            thoiGianDKHPText.setForeground(Color.RED);
+            thoiGianDKHPText.setText("Đã đóng");
+        }
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        infoPanel.add(thoiGianDKHPText, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -509,7 +556,7 @@ public class StudentDashboard extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         daDangKiPanel.add(huyDangKiBtn, gridBagConstraints);
 
-        operationsPanel.addTab("Học phần đã đăng kí", daDangKiPanel);
+        operationsPanel.addTab("Học phần đã đăng kí kì này", daDangKiPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -654,6 +701,7 @@ public class StudentDashboard extends javax.swing.JFrame {
     private javax.swing.JTextField diaChiText;
     private javax.swing.JButton doiMatKhauBtn;
     private javax.swing.ButtonGroup genderBtnGroup;
+    private javax.swing.JLabel hkhtText;
     private javax.swing.JPanel hocPhanPanel;
     private javax.swing.JScrollPane hocPhanScrollPane;
     private javax.swing.JTable hocPhanTable;
@@ -663,8 +711,10 @@ public class StudentDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JComboBox<String> lopCombo;
     private javax.swing.JLabel lopLabel;
     private javax.swing.JLabel maGvLabel;
@@ -680,7 +730,9 @@ public class StudentDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel tenGvLabel;
     private javax.swing.JTextField tenGvText;
     private javax.swing.JButton thayDoiBtn;
+    private javax.swing.JLabel thoiGianDKHPText;
     private javax.swing.JButton timHocPhanBtn;
     private javax.swing.JTextField timHocPhanText;
     // End of variables declaration//GEN-END:variables
+
 }
